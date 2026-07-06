@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SPMS - Personnel Rating Scale</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: sans-serif;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        /* Highlight cell on hover to indicate it's editable */
+        td:hover {
+            background-color: #f9f9f9;
+            cursor: text;
+        }
+        /* Style when cell is focused */
+        td:focus {
+            outline: 2px solid #4285f4;
+            background-color: #fff;
+        }
+        button {
+            margin-top: 10px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>SPMS - Personnel Rating Scale</h2>
+    <p>Click inside any cell to edit the content.</p>
+
+    <table id="myPRS">
+        <thead>
+            <tr>
+                <th rowspan="2">TYPE</th>
+                <th rowspan="2">MFO (PROGRAM/PROJECT/ACTIVITY)</th>
+                <th rowspan="2">OUTPUT REQUIRED</th>
+                <th rowspan="2">DIMENSIONS</th>
+                <th rowspan="2">MEASURES</th>
+                <th colspan="5">SCALE</th>
+                <th rowspan="2">SUCCESS INDICATOR</th>
+                <th rowspan="2">MODE OF VERIFICATION</th>
+                    <tr>
+                        <th>5</th>
+                        <th>4</th>
+                        <th>3</th>
+                        <th>2</th>
+                        <th>1</th>
+                    </tr>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="3">
+                    <label for="type"></label>
+                        <select name="cars" id="cars">
+                        <option value="core" selected>CORE</option>
+                        <option value="strategic">STRATEGIC</option>
+                        <option value="support">SUPPORT</option>
+                        </select>
+                </td>
+                <td contenteditable="true" rowspan="3">Program/Project/Activity</td>
+                <td contenteditable="true" rowspan="3">Output of the activity</td>
+                <td>Quality</td>
+                <td>quality measures</td>
+                <td contenteditable="true">accurate</td>
+                <td contenteditable="true">N/A</td>
+                <td contenteditable="true">N/A</td>
+                <td contenteditable="true">N/A</td>
+                <td contenteditable="true">inaccurate</td>
+                <td contenteditable="true" rowspan="3">___% (no./total no.) of activity quality timeliness</td>
+                <td contenteditable="true" rowspan="3">Logbook/Routing Slip, etc.</td>
+                    <tr>
+                        <td>Efficiency</td>
+                        <td>quantity/measure of efficiency</td>
+                        <td contenteditable="true">accurate</td>
+                        <td contenteditable="true">N/A</td>
+                        <td contenteditable="true">N/A</td>
+                        <td contenteditable="true">N/A</td>
+                        <td contenteditable="true">inaccurate</td>
+                    </tr>
+                    <tr>
+                        <td>Timeliness</td>
+                        <td>measure of timeliness</td>
+                        <td contenteditable="true">accurate</td>
+                        <td contenteditable="true">N/A</td>
+                        <td contenteditable="true">N/A</td>
+                        <td contenteditable="true">N/A</td>
+                        <td contenteditable="true">inaccurate</td>
+                    </tr>
+            </tr>
+        </tbody>
+    </table>
+
+    <button onclick="addRow()">Add New Row</button>
+
+
+    <script>
+        function addRow() {
+            const tbody = document.getElementById("myPRS").getElementsByTagName('tbody')[0];
+            
+            const r1 = document.createElement('tr');
+            r1.innerHTML = `
+                <td rowspan="3">
+                    <label for="type"></label>
+                        <select name="cars" id="cars">
+                        <option value="core" selected>CORE</option>
+                        <option value="strategic">STRATEGIC</option>
+                        <option value="support">SUPPORT</option>
+                        </select>
+                </td>
+                <td contenteditable="true" rowspan="3">New Activity</td>
+                <td contenteditable="true" rowspan="3">New Output</td>
+                <td>Quality</td>
+                <td>quality measures</td>
+                <td contenteditable="true">accurate</td>
+                <td contenteditable="true">N/A</td>
+                <td contenteditable="true">N/A</td>
+                <td contenteditable="true">N/A</td>
+                <td contenteditable="true">inaccurate</td>
+                <td contenteditable="true" rowspan="3">New Success Indicator</td>
+                <td contenteditable="true" rowspan="3">New Verification Mode</td>
+            `;
+            
+            const r2 = document.createElement('tr');
+            r2.innerHTML = `
+                <td>Efficiency</td>
+                <td>quantity/measure of efficiency</td>
+                <td contenteditable="true">accurate</td>
+                <td contenteditable="true">N/A</td>
+                <td contenteditable="true">N/A</td>
+                <td contenteditable="true">N/A</td>
+                <td contenteditable="true">inaccurate</td>
+            `;
+            
+            const r3 = document.createElement('tr');
+            r3.innerHTML = `
+                <td>Timeliness</td>
+                <td>measure of timeliness</td>
+                <td contenteditable="true">accurate</td>
+                <td contenteditable="true">N/A</td>
+                <td contenteditable="true">N/A</td>
+                <td contenteditable="true">N/A</td>
+                <td contenteditable="true">inaccurate</td>
+            `;
+            
+            tbody.appendChild(r1);
+            tbody.appendChild(r2);
+            tbody.appendChild(r3);
+        }
+
+
+    populateIPCR();
+
+
+
+    alert("IPCR has been generated successfully.");
+
+}
+    </script>
+
+    <!--
+    <script>
+        function addRow() {
+            const table = document.getElementById("myPRS").getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            
+            for (let i = 0; i < 12; i++) {
+                const newCell = newRow.insertCell(i);
+                newCell.contentEditable = "true";
+                newCell.innerHTML = "New Data";
+            }
+        }
+    </script>    
+    -->
+
+
+</body>
+</html>

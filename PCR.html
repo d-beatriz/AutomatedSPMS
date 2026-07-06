@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SPMS - Personnel Rating Scale</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: sans-serif;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        /* Highlight cell on hover to indicate it's editable */
+        td:hover {
+            background-color: #f9f9f9;
+            cursor: text;
+        }
+        /* Style when cell is focused */
+        td:focus {
+            outline: 2px solid #4285f4;
+            background-color: #fff;
+        }
+        button {
+            margin-top: 10px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<!-- Header of the PCR -->
+<h3>INDIVIDUAL PERFORMANCE COMMITMENT AND REVIEW (IPCR) FORM</h3>
+    <div class="pcrHeader">
+        <p>I </p>
+        <input type="text" id="rank" name="rank" placeholder="Rank"></input>
+        <input type="text" id="name" name="name" placeholder="Full Name"></input>
+        <input type="text" id="designation" name="designation" placeholder="Designation"></input>
+        <p>, commit to deliver and agree to be rated on the attainment of the following targets in accordance with the indicated measures for the period of </p>
+        <div class="date-container">
+            <input type="date" id="start-native" value="2026-07-16" style="display: none;">
+            <input type="text" id="start-formatted" value="July 16, 2026" readonly>
+            <button type="button" id="start-btn">📅</button>
+        </div>
+        <p> to </p>
+        <!-- Instance 2: End Date -->
+        <div class="date-container">
+            <input type="date" id="end-native" value="2026-08-20" style="display: none;">
+            <input type="text" id="end-formatted" value="August 20, 2026" readonly>
+            <button type="button" id="end-btn">📅</button>
+        </div>
+        <br>
+    </div>
+
+    <!--Signature-->
+    <div class="headerSignature">
+        <p>__________________________</p>
+        <p>Signature</p>
+        <p>Date:</p>
+        <div class="date-container">
+            <input type="date" id="date-of-commitment" value="2026-07-01" style="display: none;">
+            <input type="text" id="comm-formatted" value="July 1, 2026" readonly>
+            <button type="button" id="comm-btn">📅</button>
+            <br><br><br>
+        </div>
+
+    </div>
+    <!-- Table -->
+    <table id="myPRS">
+        <thead class="tableHeader">
+            <tr>
+                <th rowspan="2">WEIGHT (%)</th>
+                <th rowspan="2">MFO (WORK/ACTIVITY)</th>
+                <th rowspan="2">SUCCESS INDICATORS</th>
+                <th colspan="1">DIMENSIONS</th>
+                <th rowspan="2">TARGET</th>
+                <th rowspan="2">ACTUAL ACCOMPLISHMENTS</th>
+                <th colspan="4">RATING</th>
+                <th rowspan="2">REMARKS</th>
+                    <tr>
+                        <th>Target + Measure</th>
+                        <th>Q</th>
+                        <th>E</th>
+                        <th>T</th>
+                        <th>A</th>
+                    </tr>
+            </tr>
+        </thead>
+        <thead class="actType">
+            <tr>
+                <th colspan="11">CORE</th>
+            </tr>
+        </thead>
+        <tr>
+            <th class="populate" id="weight"></th>
+            <th class="populate" id="mfo"></th>
+            <th class="populate" id="succ_indic"></th>
+            <th class="populate" id="dim"></th>
+            <th class="populate" id="target"></th>
+            <th class="populate" id="actual"></th>
+            <th class="populate" id="act_accomp"></th>
+            <th class="populate" id="q"></th>
+            <th class="populate" id="e"></th>
+            <th class="populate" id="t"></th>
+            <th class="populate" id="a"></th>
+            <th class="populate" id="remarks"></th>
+        </tr>
+    </table>
+
+    <script>
+  /**
+   * Initializes a custom word-formatted date picker.
+   * @param {string} nativeId - The ID of the hidden native date input.
+   * @param {string} formattedId - The ID of the visible read-only text input.
+   * @param {string} btnId - The ID of the trigger button.
+   */
+  function initializeDatePicker(nativeId, formattedId, btnId) {
+    const nativeDate = document.getElementById(nativeId);
+    const formattedDate = document.getElementById(formattedId);
+    const pickerBtn = document.getElementById(btnId);
+
+    // Guard clause to prevent errors if elements don't exist
+    if (!nativeDate || !formattedDate || !pickerBtn) return;
+
+    // Open the native date picker when clicking the button
+    pickerBtn.addEventListener('click', () => {
+      nativeDate.showPicker();
+    });
+
+    // Listen for changes and reformat the text into words
+    nativeDate.addEventListener('change', (e) => {
+      const dateValue = e.target.value;
+      if (!dateValue) {
+        formattedDate.value = '';
+        return;
+      }
+
+      // Split components to prevent timezone shifting issues
+      const [year, month, day] = dateValue.split('-');
+      const dateObj = new Date(year, month - 1, day);
+
+      // Format the date into text words
+      const formatted = dateObj.toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+      });
+
+      formattedDate.value = formatted;
+    });
+  }
+
+  // --- Initialize your instances here ---
+  initializeDatePicker('start-native', 'start-formatted', 'start-btn');
+  initializeDatePicker('end-native', 'end-formatted', 'end-btn');
+  initializeDatePicker('date-of-commitment', 'comm-formatted', 'comm-btn');
+
+  //Populate from PRS to IPCR
+  
+
+
+</script>
+
+</html>
+
