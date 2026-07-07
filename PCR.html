@@ -150,9 +150,6 @@
       INDIVIDUAL PERFORMANCE COMMITMENT AND REVIEW (IPCR) FORM
     </h3>
 
-    <button onclick="goBackToRatingScale()">Back to Rating Scale</button>
-    <button onclick="openPMAR()">Open PMAR</button>
-
     <br /><br />
 
     <div class="pcrHeader">
@@ -262,6 +259,10 @@
 
       <tbody id="pcr-body"></tbody>
     </table>
+
+    <br /><br />
+    <button onclick="goBackToRatingScale()">Back to Rating Scale</button>
+    <button onclick="openPMAR()">Open PMAR</button>
 
     <script>
       const RATING_SCALE_STORAGE_KEY = 'spmsRatingScaleData';
@@ -640,7 +641,7 @@
       }
 
       function openPMAR() {
-        window.location.href = 'MAR.html';
+        window.location.href = 'Monthly Accomplishment Report.html';
       }
 
       initializeDatePicker('start-native', 'start-formatted', 'start-btn');

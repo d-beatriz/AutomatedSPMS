@@ -1,92 +1,471 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Monthly Accomplishment Report</title>
     <style>
-        h4 {
-            display: inline-block;
-            margin: 0 0 0 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: sans-serif;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        /* Highlight cell on hover to indicate it's editable */
-        td:hover {
-            background-color: #f9f9f9;
-            cursor: text;
-        }
-        /* Style when cell is focused */
-        td:focus {
-            outline: 2px solid #4285f4;
-            background-color: #fff;
-        }
-        button {
-            margin-top: 10px;
-            padding: 8px 12px;
-            cursor: pointer;
-        }
+      h4 {
+        display: inline-block;
+        margin: 0 0 0 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: sans-serif;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      /* Highlight cell on hover to indicate it's editable */
+      td:hover {
+        background-color: #f9f9f9;
+        cursor: text;
+      }
+      /* Style when cell is focused */
+      td:focus {
+        outline: 2px solid #4285f4;
+        background-color: #fff;
+      }
+      button {
+        margin-top: 10px;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      select {
+        width: 100%;
+        padding: 6px;
+        font-family: sans-serif;
+      }
+      .disabled-rating {
+        background-color: #e9e9e9;
+        color: #777;
+        text-align: center;
+        cursor: not-allowed;
+      }
+      .disabled-rating:hover {
+        background-color: #e9e9e9;
+        cursor: not-allowed;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h3>PERSONNEL'S MONTHLY ACCOMPLISHMENT REPORT</h3>
 
     <h4>Name:</h4>
-    <input type="text" placeholder="Full Name"></input><br><br>
+    <input type="text" id="mar-name" placeholder="Full Name" /><br /><br />
+
     <h4>OFFICE/JAIL UNIT:</h4>
-    <input type="text" placeholder="Office/Jail Unit"></input><br><br>
+    <input
+      type="text"
+      id="mar-office"
+      placeholder="Office/Jail Unit"
+    /><br /><br />
+
     <h4>DIVISION/SECTION</h4>
-    <input type="text" placeholder="Division/Section"></input><br><br>
+    <input
+      type="text"
+      id="mar-division"
+      placeholder="Division/Section"
+    /><br /><br />
+
     <h4>PERIOD COVERED:</h4>
-    <input type="text" placeholder="June 1-31, 2026"></input><br><br><br>
+    <input
+      type="text"
+      id="mar-period"
+      placeholder="June 1-30, 2026"
+    /><br /><br /><br />
+
     <table id="pmar">
-        <thead>
-            <tr>
-                <th rowspan="2">DATE</th>
-                <th colspan="1">MAJOR FINAL OUTPUT</th>
-                <th colspan="3">RATING</th>
-                <th rowspan="2">REMARKS</th>
-                    <tr>
-                        <th>Note: List down all your accomplished task (Narrated based on your Success Indicator (S.I) of your PCR form)</th>
-                        <th>Q</th>
-                        <th>E</th>
-                        <th>T</th>
-                    </tr>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td contenteditable="true" id="marDate"></td>
-                <td contenteditable="true" id="marMFO"></td>
-                <td contenteditable="true" id="marQ"></td>
-                <td contenteditable="true" id="marE"></td>
-                <td contenteditable="true" id="marT"></td>
-                <td contenteditable="true" id="marRemarks"></td>
-            </tr>
-        </tbody>
+      <thead>
+        <tr>
+          <th rowspan="2">DATE</th>
+          <th colspan="1">MAJOR FINAL OUTPUT</th>
+          <th colspan="3">RATING</th>
+          <th rowspan="2">REMARKS</th>
+        </tr>
+        <tr>
+          <th>
+            Note: List down all your accomplished task (Narrated based on your
+            Success Indicator (S.I) of your PCR form)
+          </th>
+          <th>Q</th>
+          <th>E</th>
+          <th>T</th>
+        </tr>
+      </thead>
+
+      <tbody id="mar-body"></tbody>
     </table>
 
     <button onclick="addRow()">Add Row</button>
+    <button onclick="saveMAR(true)">Save MAR</button>
+    <button onclick="openPCR()">Update PCR</button>
+    <button onclick="goBackToRatingScale()">Back to Rating Scale</button>
 
     <script>
-        function addRow() {
-            const table = document.getElementById("pmar").getElementsByTagName('tbody')[0];
-            const newRow = table.insertRow();
-            for (let i = 0; i < 6; i++) {
-                const newCell = newRow.insertCell(i);
-                newCell.contentEditable = "true";
-            }
+      const MAR_STORAGE_KEY = 'spmsMARData';
+      const RATING_SCALE_STORAGE_KEY = 'spmsRatingScaleData';
+
+      let ratingScaleActivities = [];
+      let autoSaveMAR = null;
+
+      function getSavedRatingScaleData() {
+        if (window.location.hash.startsWith('#data=')) {
+          const encodedData = window.location.hash.replace('#data=', '');
+          let decodedData = '';
+
+          try {
+            decodedData = decodeURIComponent(encodedData);
+          } catch (error) {
+            decodedData = encodedData;
+          }
+
+          try {
+            localStorage.setItem(RATING_SCALE_STORAGE_KEY, decodedData);
+          } catch (error) {
+            console.warn('Local storage is not available.', error);
+          }
+
+          return decodedData;
         }
+
+        try {
+          return localStorage.getItem(RATING_SCALE_STORAGE_KEY);
+        } catch (error) {
+          console.warn('Local storage is not available.', error);
+          return null;
+        }
+      }
+
+      function loadRatingScaleActivities() {
+        const storedData = getSavedRatingScaleData();
+
+        if (!storedData) {
+          ratingScaleActivities = [];
+          return;
+        }
+
+        try {
+          const data = JSON.parse(storedData);
+          ratingScaleActivities = data.activities || [];
+        } catch (error) {
+          console.warn('Rating Scale data could not be read.', error);
+          ratingScaleActivities = [];
+        }
+      }
+
+      function normalizeText(value) {
+        return String(value || '')
+          .trim()
+          .toUpperCase()
+          .replace(/\s+/g, ' ');
+      }
+
+      function isNA(value) {
+        const text = normalizeText(value);
+
+        return (
+          text === 'N/A' ||
+          text === 'NA' ||
+          text === 'NOT APPLICABLE' ||
+          text === 'NONE'
+        );
+      }
+
+      function getDimension(activity, dimensionName) {
+        if (!activity || !activity.dimensions) return null;
+
+        return (
+          activity.dimensions[dimensionName] ||
+          activity.dimensions[dimensionName.toLowerCase()] ||
+          null
+        );
+      }
+
+      function dimensionIsNotApplicable(activity, dimensionName) {
+        const dimension = getDimension(activity, dimensionName);
+
+        if (!dimension) return false;
+
+        const measure = dimension.measure || '';
+
+        const scaleValues = [
+          dimension.scale5,
+          dimension.scale4,
+          dimension.scale3,
+          dimension.scale2,
+          dimension.scale1,
+        ];
+
+        const allScaleValuesAreNA = scaleValues.every(function (value) {
+          return isNA(value);
+        });
+
+        return isNA(measure) || allScaleValuesAreNA;
+      }
+
+      function setRatingCellStatus(cell, disabled) {
+        if (disabled) {
+          cell.dataset.disabledByRule = 'true';
+          cell.contentEditable = 'false';
+          cell.textContent = 'N/A';
+          cell.classList.add('disabled-rating');
+        } else {
+          if (
+            cell.dataset.disabledByRule === 'true' &&
+            normalizeText(cell.textContent) === 'N/A'
+          ) {
+            cell.textContent = '';
+          }
+
+          cell.dataset.disabledByRule = 'false';
+          cell.contentEditable = 'true';
+          cell.classList.remove('disabled-rating');
+        }
+      }
+
+      function findActivityByMFO(mfo) {
+        const selectedMFO = normalizeText(mfo);
+
+        return ratingScaleActivities.find(function (activity) {
+          return normalizeText(activity.mfo) === selectedMFO;
+        });
+      }
+
+      function applyRatingRules(row, selectedMFO) {
+        const activity = findActivityByMFO(selectedMFO);
+
+        const qCell = row.cells[2];
+        const eCell = row.cells[3];
+        const tCell = row.cells[4];
+
+        if (!activity) {
+          setRatingCellStatus(qCell, false);
+          setRatingCellStatus(eCell, false);
+          setRatingCellStatus(tCell, false);
+          return;
+        }
+
+        setRatingCellStatus(
+          qCell,
+          dimensionIsNotApplicable(activity, 'Quality'),
+        );
+        setRatingCellStatus(
+          eCell,
+          dimensionIsNotApplicable(activity, 'Efficiency'),
+        );
+        setRatingCellStatus(
+          tCell,
+          dimensionIsNotApplicable(activity, 'Timeliness'),
+        );
+      }
+
+      function createMFOSelect(row, savedMFO) {
+        const select = document.createElement('select');
+
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = '-- Select MFO from Rating Scale --';
+        select.appendChild(defaultOption);
+
+        if (ratingScaleActivities.length === 0) {
+          const noDataOption = document.createElement('option');
+          noDataOption.value = '';
+          noDataOption.textContent = 'No Rating Scale data found';
+          select.appendChild(noDataOption);
+        }
+
+        let savedMFOExists = false;
+
+        ratingScaleActivities.forEach(function (activity) {
+          const option = document.createElement('option');
+          option.value = activity.mfo || '';
+          option.textContent = activity.mfo || 'Untitled MFO';
+
+          if (normalizeText(savedMFO) === normalizeText(activity.mfo)) {
+            option.selected = true;
+            savedMFOExists = true;
+          }
+
+          select.appendChild(option);
+        });
+
+        if (savedMFO && !savedMFOExists) {
+          const previousOption = document.createElement('option');
+          previousOption.value = savedMFO;
+          previousOption.textContent = savedMFO + ' (previous)';
+          previousOption.selected = true;
+          select.appendChild(previousOption);
+        }
+
+        select.addEventListener('change', function () {
+          applyRatingRules(row, select.value);
+          saveMAR(false);
+        });
+
+        return select;
+      }
+
+      function addRow(savedRow, shouldSave) {
+        const tbody = document.getElementById('mar-body');
+        const newRow = tbody.insertRow();
+        const rowData = savedRow || {};
+
+        const dateCell = newRow.insertCell(0);
+        dateCell.contentEditable = 'true';
+        dateCell.textContent = rowData.date || '';
+
+        const mfoCell = newRow.insertCell(1);
+        const mfoSelect = createMFOSelect(newRow, rowData.mfo || '');
+        mfoCell.appendChild(mfoSelect);
+
+        const qCell = newRow.insertCell(2);
+        qCell.contentEditable = 'true';
+        qCell.textContent = rowData.q || '';
+
+        const eCell = newRow.insertCell(3);
+        eCell.contentEditable = 'true';
+        eCell.textContent = rowData.e || '';
+
+        const tCell = newRow.insertCell(4);
+        tCell.contentEditable = 'true';
+        tCell.textContent = rowData.t || '';
+
+        const remarksCell = newRow.insertCell(5);
+        remarksCell.contentEditable = 'true';
+        remarksCell.textContent = rowData.remarks || '';
+
+        applyRatingRules(newRow, mfoSelect.value);
+
+        if (shouldSave !== false) {
+          scheduleSaveMAR();
+        }
+      }
+
+      function collectMARData() {
+        const tbody = document.getElementById('mar-body');
+        const rows = tbody.rows;
+        const marRows = [];
+
+        for (let i = 0; i < rows.length; i++) {
+          const row = rows[i];
+          const mfoSelect = row.cells[1].querySelector('select');
+
+          marRows.push({
+            date: row.cells[0].innerText.trim(),
+            mfo: mfoSelect ? mfoSelect.value : '',
+            q: row.cells[2].innerText.trim(),
+            e: row.cells[3].innerText.trim(),
+            t: row.cells[4].innerText.trim(),
+            remarks: row.cells[5].innerText.trim(),
+          });
+        }
+
+        return {
+          name: document.getElementById('mar-name').value,
+          office: document.getElementById('mar-office').value,
+          division: document.getElementById('mar-division').value,
+          period: document.getElementById('mar-period').value,
+          rows: marRows,
+        };
+      }
+
+      function saveMAR(showAlert) {
+        const data = collectMARData();
+
+        try {
+          localStorage.setItem(MAR_STORAGE_KEY, JSON.stringify(data));
+
+          if (showAlert) {
+            alert('MAR has been saved successfully.');
+          }
+        } catch (error) {
+          console.error(error);
+
+          if (showAlert) {
+            alert('Unable to save MAR data.');
+          }
+        }
+      }
+
+      function loadSavedMAR() {
+        const tbody = document.getElementById('mar-body');
+        tbody.innerHTML = '';
+
+        let savedData = null;
+
+        try {
+          savedData = localStorage.getItem(MAR_STORAGE_KEY);
+        } catch (error) {
+          console.warn('Local storage is not available.', error);
+        }
+
+        if (!savedData) {
+          addRow(null, false);
+          return;
+        }
+
+        try {
+          const data = JSON.parse(savedData);
+          const rows = data.rows || [];
+
+          document.getElementById('mar-name').value = data.name || '';
+          document.getElementById('mar-office').value = data.office || '';
+          document.getElementById('mar-division').value = data.division || '';
+          document.getElementById('mar-period').value = data.period || '';
+
+          if (rows.length === 0) {
+            addRow(null, false);
+            return;
+          }
+
+          rows.forEach(function (row) {
+            addRow(row, false);
+          });
+        } catch (error) {
+          console.warn('Saved MAR data could not be loaded.', error);
+          addRow(null, false);
+        }
+      }
+
+      function scheduleSaveMAR() {
+        clearTimeout(autoSaveMAR);
+
+        autoSaveMAR = setTimeout(function () {
+          saveMAR(false);
+        }, 300);
+      }
+
+      function openPCR() {
+        saveMAR(false);
+        window.location.href = 'PCR.html';
+      }
+
+      function goBackToRatingScale() {
+        saveMAR(false);
+        window.location.href = 'RatingScale.html';
+      }
+
+      document.addEventListener('input', function () {
+        scheduleSaveMAR();
+      });
+
+      document.addEventListener('change', function () {
+        scheduleSaveMAR();
+      });
+
+      window.addEventListener('beforeunload', function () {
+        saveMAR(false);
+      });
+
+      loadRatingScaleActivities();
+      loadSavedMAR();
     </script>
-</body>
+  </body>
 </html>
