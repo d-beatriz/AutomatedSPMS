@@ -1,171 +1,653 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>SPMS - Personnel Rating Scale</title>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: sans-serif;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        /* Highlight cell on hover to indicate it's editable */
-        td:hover {
-            background-color: #f9f9f9;
-            cursor: text;
-        }
-        /* Style when cell is focused */
-        td:focus {
-            outline: 2px solid #4285f4;
-            background-color: #fff;
-        }
-        button {
-            margin-top: 10px;
-            padding: 8px 12px;
-            cursor: pointer;
-        }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: sans-serif;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      /* Highlight cell on hover to indicate it's editable */
+      td:hover {
+        background-color: #f9f9f9;
+        cursor: text;
+      }
+      /* Style when cell is focused */
+      td:focus {
+        outline: 2px solid #4285f4;
+        background-color: #fff;
+      }
+      button {
+        margin-top: 10px;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+
+      .pcr-title {
+        text-align: center;
+        font-weight: bold;
+        font-size: 16px;
+        margin-bottom: 14px;
+        font-family: sans-serif;
+      }
+
+      .pcrHeader {
+        width: 100%;
+        text-align: center;
+        font-family: sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
+      .inline-input {
+        border: none;
+        border-bottom: 1px solid transparent;
+        font-family: sans-serif;
+        font-size: 16px;
+        text-align: center;
+        padding: 2px 4px;
+      }
+
+      .inline-input:focus {
+        outline: none;
+        border-bottom: 1px solid #000;
+      }
+
+      #rank {
+        width: 45px;
+      }
+
+      #name {
+        width: 220px;
+      }
+
+      #designation {
+        width: 280px;
+      }
+
+      .date-container {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+      }
+
+      .date-container input[type='text'] {
+        border: none;
+        font-family: sans-serif;
+        font-size: 16px;
+        font-weight: bold;
+        width: 170px;
+        text-align: center;
+      }
+
+      .date-container input[type='text']:focus {
+        outline: none;
+      }
+
+      .date-container button {
+        margin-top: 0;
+        padding: 2px 5px;
+        font-size: 12px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .headerSignature {
+        width: 30%;
+        margin-left: auto;
+        margin-top: 16px;
+        text-align: center;
+        font-family: sans-serif;
+        font-size: 14px;
+      }
+
+      .signature-line {
+        border-top: 2px solid #000;
+        padding-top: 3px;
+        font-weight: bold;
+      }
+
+      .date-line {
+        margin-top: 18px;
+        text-align: left;
+        font-weight: bold;
+      }
+
+      .date-line .date-container input[type='text'] {
+        width: 150px;
+        font-size: 14px;
+        font-weight: normal;
+        text-align: left;
+      }
+
+      .disabled-rating {
+        background-color: #e9e9e9;
+        color: #777;
+        text-align: center;
+        cursor: not-allowed;
+      }
+
+      .disabled-rating:hover {
+        background-color: #e9e9e9;
+        cursor: not-allowed;
+      }
     </style>
-</head>
+  </head>
+  <body>
+    <h3 class="pcr-title">
+      INDIVIDUAL PERFORMANCE COMMITMENT AND REVIEW (IPCR) FORM
+    </h3>
 
-<!-- Header of the PCR -->
-<h3>INDIVIDUAL PERFORMANCE COMMITMENT AND REVIEW (IPCR) FORM</h3>
+    <button onclick="goBackToRatingScale()">Back to Rating Scale</button>
+    <button onclick="openPMAR()">Open PMAR</button>
+
+    <br /><br />
+
     <div class="pcrHeader">
-        <p>I </p>
-        <input type="text" id="rank" name="rank" placeholder="Rank"></input>
-        <input type="text" id="name" name="name" placeholder="Full Name"></input>
-        <input type="text" id="designation" name="designation" placeholder="Designation"></input>
-        <p>, commit to deliver and agree to be rated on the attainment of the following targets in accordance with the indicated measures for the period of </p>
-        <div class="date-container">
-            <input type="date" id="start-native" value="2026-07-16" style="display: none;">
-            <input type="text" id="start-formatted" value="July 16, 2026" readonly>
-            <button type="button" id="start-btn">📅</button>
-        </div>
-        <p> to </p>
-        <!-- Instance 2: End Date -->
-        <div class="date-container">
-            <input type="date" id="end-native" value="2026-08-20" style="display: none;">
-            <input type="text" id="end-formatted" value="August 20, 2026" readonly>
-            <button type="button" id="end-btn">📅</button>
-        </div>
-        <br>
+      <span>I, </span>
+
+      <input
+        type="text"
+        id="rank"
+        name="rank"
+        class="inline-input"
+        value="JO1"
+        placeholder="Rank"
+      />
+      <input
+        type="text"
+        id="name"
+        name="name"
+        class="inline-input"
+        value="Full Name"
+        placeholder="Full Name"
+      />
+      <span>, </span>
+      <input
+        type="text"
+        id="designation"
+        name="designation"
+        class="inline-input"
+        value="Designation"
+        placeholder="Designation"
+      />
+
+      <span
+        >, commit to deliver and agree to be rated on the attainment of the
+        following targets in accordance with the indicated measures for the
+        period of
+      </span>
+
+      <div class="date-container">
+        <input
+          type="date"
+          id="start-native"
+          value="2025-01-01"
+          style="display: none"
+        />
+        <input
+          type="text"
+          id="start-formatted"
+          value="January 1, 2025"
+          readonly
+        />
+        <button type="button" id="start-btn">📅</button>
+      </div>
+
+      <span> to </span>
+
+      <div class="date-container">
+        <input
+          type="date"
+          id="end-native"
+          value="2025-06-30"
+          style="display: none"
+        />
+        <input type="text" id="end-formatted" value="June 30, 2025" readonly />
+        <button type="button" id="end-btn">📅</button>
+      </div>
     </div>
 
-    <!--Signature-->
     <div class="headerSignature">
-        <p>__________________________</p>
-        <p>Signature</p>
-        <p>Date:</p>
-        <div class="date-container">
-            <input type="date" id="date-of-commitment" value="2026-07-01" style="display: none;">
-            <input type="text" id="comm-formatted" value="July 1, 2026" readonly>
-            <button type="button" id="comm-btn">📅</button>
-            <br><br><br>
-        </div>
+      <div class="signature-line">Signature</div>
 
+      <div class="date-line">
+        Date:
+        <div class="date-container">
+          <input
+            type="date"
+            id="date-of-commitment"
+            value="2025-01-01"
+            style="display: none"
+          />
+          <input type="text" id="comm-formatted" readonly />
+          <button type="button" id="comm-btn">📅</button>
+        </div>
+      </div>
     </div>
-    <!-- Table -->
-    <table id="myPRS">
-        <thead class="tableHeader">
-            <tr>
-                <th rowspan="2">WEIGHT (%)</th>
-                <th rowspan="2">MFO (WORK/ACTIVITY)</th>
-                <th rowspan="2">SUCCESS INDICATORS</th>
-                <th colspan="1">DIMENSIONS</th>
-                <th rowspan="2">TARGET</th>
-                <th rowspan="2">ACTUAL ACCOMPLISHMENTS</th>
-                <th colspan="4">RATING</th>
-                <th rowspan="2">REMARKS</th>
-                    <tr>
-                        <th>Target + Measure</th>
-                        <th>Q</th>
-                        <th>E</th>
-                        <th>T</th>
-                        <th>A</th>
-                    </tr>
-            </tr>
-        </thead>
-        <thead class="actType">
-            <tr>
-                <th colspan="11">CORE</th>
-            </tr>
-        </thead>
+
+    <br /><br />
+
+    <table id="myPCR">
+      <thead class="tableHeader">
         <tr>
-            <th class="populate" id="weight"></th>
-            <th class="populate" id="mfo"></th>
-            <th class="populate" id="succ_indic"></th>
-            <th class="populate" id="dim"></th>
-            <th class="populate" id="target"></th>
-            <th class="populate" id="actual"></th>
-            <th class="populate" id="act_accomp"></th>
-            <th class="populate" id="q"></th>
-            <th class="populate" id="e"></th>
-            <th class="populate" id="t"></th>
-            <th class="populate" id="a"></th>
-            <th class="populate" id="remarks"></th>
+          <th rowspan="2">WEIGHT (%)</th>
+          <th rowspan="2">MFO (WORK/ACTIVITY)</th>
+          <th colspan="1">SUCCESS INDICATORS</th>
+          <th rowspan="2">TARGET</th>
+          <th rowspan="2">ACTUAL ACCOMPLISHMENTS</th>
+          <th colspan="4">RATING</th>
+          <th rowspan="2">REMARKS</th>
         </tr>
+        <tr>
+          <th>Target + Measure</th>
+          <th>Q</th>
+          <th>E</th>
+          <th>T</th>
+          <th>A</th>
+        </tr>
+      </thead>
+
+      <tbody id="pcr-body"></tbody>
     </table>
 
     <script>
-  /**
-   * Initializes a custom word-formatted date picker.
-   * @param {string} nativeId - The ID of the hidden native date input.
-   * @param {string} formattedId - The ID of the visible read-only text input.
-   * @param {string} btnId - The ID of the trigger button.
-   */
-  function initializeDatePicker(nativeId, formattedId, btnId) {
-    const nativeDate = document.getElementById(nativeId);
-    const formattedDate = document.getElementById(formattedId);
-    const pickerBtn = document.getElementById(btnId);
+      const RATING_SCALE_STORAGE_KEY = 'spmsRatingScaleData';
+      const MAR_STORAGE_KEY = 'spmsMARData';
 
-    // Guard clause to prevent errors if elements don't exist
-    if (!nativeDate || !formattedDate || !pickerBtn) return;
+      function initializeDatePicker(nativeId, formattedId, btnId) {
+        const nativeDate = document.getElementById(nativeId);
+        const formattedDate = document.getElementById(formattedId);
+        const pickerBtn = document.getElementById(btnId);
 
-    // Open the native date picker when clicking the button
-    pickerBtn.addEventListener('click', () => {
-      nativeDate.showPicker();
-    });
+        if (!nativeDate || !formattedDate || !pickerBtn) return;
 
-    // Listen for changes and reformat the text into words
-    nativeDate.addEventListener('change', (e) => {
-      const dateValue = e.target.value;
-      if (!dateValue) {
-        formattedDate.value = '';
-        return;
+        pickerBtn.addEventListener('click', function () {
+          if (typeof nativeDate.showPicker === 'function') {
+            nativeDate.showPicker();
+          } else {
+            nativeDate.click();
+          }
+        });
+
+        nativeDate.addEventListener('change', function (e) {
+          const dateValue = e.target.value;
+
+          if (!dateValue) {
+            formattedDate.value = '';
+            return;
+          }
+
+          const dateParts = dateValue.split('-');
+          const year = dateParts[0];
+          const month = dateParts[1];
+          const day = dateParts[2];
+
+          const dateObj = new Date(year, month - 1, day);
+
+          formattedDate.value = dateObj.toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+          });
+        });
+
+        nativeDate.dispatchEvent(new Event('change'));
       }
 
-      // Split components to prevent timezone shifting issues
-      const [year, month, day] = dateValue.split('-');
-      const dateObj = new Date(year, month - 1, day);
+      function normalizeText(value) {
+        return String(value || '')
+          .trim()
+          .toUpperCase()
+          .replace(/\s+/g, ' ');
+      }
 
-      // Format the date into text words
-      const formatted = dateObj.toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric'
-      });
+      function isNA(value) {
+        const text = normalizeText(value);
 
-      formattedDate.value = formatted;
-    });
-  }
+        return (
+          text === 'N/A' ||
+          text === 'NA' ||
+          text === 'NOT APPLICABLE' ||
+          text === 'NONE'
+        );
+      }
 
-  // --- Initialize your instances here ---
-  initializeDatePicker('start-native', 'start-formatted', 'start-btn');
-  initializeDatePicker('end-native', 'end-formatted', 'end-btn');
-  initializeDatePicker('date-of-commitment', 'comm-formatted', 'comm-btn');
+      function parseRating(value) {
+        const text = String(value || '').trim();
 
-  //Populate from PRS to IPCR
-  
+        if (!text) return null;
+        if (isNA(text)) return null;
 
+        const number = parseFloat(text);
 
-</script>
+        if (isNaN(number)) return null;
 
+        return number;
+      }
+
+      function formatAverage(value) {
+        if (value === null || value === undefined || isNaN(value)) {
+          return '';
+        }
+
+        const rounded = Math.round(value * 100) / 100;
+
+        if (Number.isInteger(rounded)) {
+          return String(rounded);
+        }
+
+        return rounded.toFixed(2);
+      }
+
+      function getDimension(activity, dimensionName) {
+        if (!activity || !activity.dimensions) return null;
+
+        return (
+          activity.dimensions[dimensionName] ||
+          activity.dimensions[dimensionName.toLowerCase()] ||
+          null
+        );
+      }
+
+      function dimensionIsNotApplicable(activity, dimensionName) {
+        const dimension = getDimension(activity, dimensionName);
+
+        if (!dimension) return false;
+
+        const measure = dimension.measure || '';
+
+        const scaleValues = [
+          dimension.scale5,
+          dimension.scale4,
+          dimension.scale3,
+          dimension.scale2,
+          dimension.scale1,
+        ];
+
+        const allScaleValuesAreNA = scaleValues.every(function (value) {
+          return isNA(value);
+        });
+
+        return isNA(measure) || allScaleValuesAreNA;
+      }
+
+      function createEditableCell(text) {
+        const cell = document.createElement('td');
+        cell.contentEditable = 'true';
+        cell.textContent = text || '';
+        return cell;
+      }
+
+      function createRatingCell(text, disabled) {
+        const cell = document.createElement('td');
+
+        if (disabled) {
+          cell.contentEditable = 'false';
+          cell.textContent = 'N/A';
+          cell.classList.add('disabled-rating');
+        } else {
+          cell.contentEditable = 'true';
+          cell.textContent = text || '';
+        }
+
+        return cell;
+      }
+
+      function createTypeHeader(type) {
+        const row = document.createElement('tr');
+        const header = document.createElement('th');
+
+        header.colSpan = 10;
+        header.textContent = type;
+
+        row.appendChild(header);
+        return row;
+      }
+
+      function getSavedRatingScaleData() {
+        if (window.location.hash.startsWith('#data=')) {
+          const encodedData = window.location.hash.replace('#data=', '');
+          let decodedData = '';
+
+          try {
+            decodedData = decodeURIComponent(encodedData);
+          } catch (error) {
+            decodedData = encodedData;
+          }
+
+          try {
+            localStorage.setItem(RATING_SCALE_STORAGE_KEY, decodedData);
+          } catch (error) {
+            console.warn('Local storage is not available.', error);
+          }
+
+          return decodedData;
+        }
+
+        try {
+          return localStorage.getItem(RATING_SCALE_STORAGE_KEY);
+        } catch (error) {
+          console.warn('Local storage is not available.', error);
+          return null;
+        }
+      }
+
+      function getSavedMARData() {
+        try {
+          return localStorage.getItem(MAR_STORAGE_KEY);
+        } catch (error) {
+          console.warn('MAR data is not available.', error);
+          return null;
+        }
+      }
+
+      function calculateMARAverages() {
+        const storedMAR = getSavedMARData();
+        const result = {};
+
+        if (!storedMAR) return result;
+
+        let data;
+
+        try {
+          data = JSON.parse(storedMAR);
+        } catch (error) {
+          console.warn('MAR data could not be read.', error);
+          return result;
+        }
+
+        const rows = data.rows || [];
+
+        rows.forEach(function (row) {
+          const mfoKey = normalizeText(row.mfo);
+
+          if (!mfoKey) return;
+
+          if (!result[mfoKey]) {
+            result[mfoKey] = {
+              qTotal: 0,
+              qCount: 0,
+              eTotal: 0,
+              eCount: 0,
+              tTotal: 0,
+              tCount: 0,
+            };
+          }
+
+          const q = parseRating(row.q);
+          const e = parseRating(row.e);
+          const t = parseRating(row.t);
+
+          if (q !== null) {
+            result[mfoKey].qTotal += q;
+            result[mfoKey].qCount++;
+          }
+
+          if (e !== null) {
+            result[mfoKey].eTotal += e;
+            result[mfoKey].eCount++;
+          }
+
+          if (t !== null) {
+            result[mfoKey].tTotal += t;
+            result[mfoKey].tCount++;
+          }
+        });
+
+        Object.keys(result).forEach(function (mfoKey) {
+          const item = result[mfoKey];
+
+          item.qAverage = item.qCount > 0 ? item.qTotal / item.qCount : null;
+          item.eAverage = item.eCount > 0 ? item.eTotal / item.eCount : null;
+          item.tAverage = item.tCount > 0 ? item.tTotal / item.tCount : null;
+        });
+
+        return result;
+      }
+
+      function showMessage(message) {
+        const tbody = document.getElementById('pcr-body');
+        tbody.innerHTML = '';
+
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+
+        cell.colSpan = 10;
+        cell.textContent = message;
+
+        row.appendChild(cell);
+        tbody.appendChild(row);
+      }
+
+      function averageAvailableRatings(values) {
+        const validValues = values.filter(function (value) {
+          return value !== null && value !== undefined && !isNaN(value);
+        });
+
+        if (validValues.length === 0) return null;
+
+        const total = validValues.reduce(function (sum, value) {
+          return sum + value;
+        }, 0);
+
+        return total / validValues.length;
+      }
+
+      function populateIPCR() {
+        const tbody = document.getElementById('pcr-body');
+        const storedData = getSavedRatingScaleData();
+
+        tbody.innerHTML = '';
+
+        if (!storedData) {
+          showMessage(
+            'No Rating Scale data found. Please open RatingScale.html and click Generate PCR.',
+          );
+          return;
+        }
+
+        let data;
+
+        try {
+          data = JSON.parse(storedData);
+        } catch (error) {
+          showMessage(
+            'The saved Rating Scale data could not be read. Please regenerate the PCR from RatingScale.html.',
+          );
+          return;
+        }
+
+        const activities = data.activities || [];
+        const marAverages = calculateMARAverages();
+
+        if (activities.length === 0) {
+          showMessage('No Rating Scale items were saved.');
+          return;
+        }
+
+        const typeOrder = ['CORE', 'STRATEGIC', 'SUPPORT'];
+
+        typeOrder.forEach(function (type) {
+          const groupedActivities = activities.filter(function (activity) {
+            return String(activity.type || '').toUpperCase() === type;
+          });
+
+          if (groupedActivities.length === 0) return;
+
+          tbody.appendChild(createTypeHeader(type));
+
+          groupedActivities.forEach(function (activity) {
+            const row = document.createElement('tr');
+            const mfoKey = normalizeText(activity.mfo);
+            const average = marAverages[mfoKey] || {};
+
+            const qNotApplicable = dimensionIsNotApplicable(
+              activity,
+              'Quality',
+            );
+            const eNotApplicable = dimensionIsNotApplicable(
+              activity,
+              'Efficiency',
+            );
+            const tNotApplicable = dimensionIsNotApplicable(
+              activity,
+              'Timeliness',
+            );
+
+            const qValue = qNotApplicable ? null : average.qAverage;
+            const eValue = eNotApplicable ? null : average.eAverage;
+            const tValue = tNotApplicable ? null : average.tAverage;
+
+            const aValue = averageAvailableRatings([qValue, eValue, tValue]);
+
+            row.appendChild(createEditableCell(''));
+            row.appendChild(createEditableCell(activity.mfo));
+            row.appendChild(createEditableCell(activity.successIndicator));
+            row.appendChild(createEditableCell(activity.outputRequired));
+            row.appendChild(createEditableCell(''));
+            row.appendChild(
+              createRatingCell(formatAverage(qValue), qNotApplicable),
+            );
+            row.appendChild(
+              createRatingCell(formatAverage(eValue), eNotApplicable),
+            );
+            row.appendChild(
+              createRatingCell(formatAverage(tValue), tNotApplicable),
+            );
+            row.appendChild(createEditableCell(formatAverage(aValue)));
+            row.appendChild(createEditableCell(''));
+
+            tbody.appendChild(row);
+          });
+        });
+      }
+
+      function goBackToRatingScale() {
+        window.location.href = 'RatingScale.html';
+      }
+
+      function openPMAR() {
+        window.location.href = 'MAR.html';
+      }
+
+      initializeDatePicker('start-native', 'start-formatted', 'start-btn');
+      initializeDatePicker('end-native', 'end-formatted', 'end-btn');
+      initializeDatePicker('date-of-commitment', 'comm-formatted', 'comm-btn');
+
+      populateIPCR();
+    </script>
+  </body>
 </html>
-

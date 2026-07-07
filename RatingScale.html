@@ -1,189 +1,388 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>SPMS - Personnel Rating Scale</title>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: sans-serif;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        /* Highlight cell on hover to indicate it's editable */
-        td:hover {
-            background-color: #f9f9f9;
-            cursor: text;
-        }
-        /* Style when cell is focused */
-        td:focus {
-            outline: 2px solid #4285f4;
-            background-color: #fff;
-        }
-        button {
-            margin-top: 10px;
-            padding: 8px 12px;
-            cursor: pointer;
-        }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: sans-serif;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      /* Highlight cell on hover to indicate it's editable */
+      td:hover {
+        background-color: #f9f9f9;
+        cursor: text;
+      }
+      /* Style when cell is focused */
+      td:focus {
+        outline: 2px solid #4285f4;
+        background-color: #fff;
+      }
+      button {
+        margin-top: 10px;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      select {
+        width: 100%;
+        padding: 6px;
+        font-family: sans-serif;
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <h2>SPMS - Personnel Rating Scale</h2>
     <p>Click inside any cell to edit the content.</p>
 
     <table id="myPRS">
-        <thead>
-            <tr>
-                <th rowspan="2">TYPE</th>
-                <th rowspan="2">MFO (PROGRAM/PROJECT/ACTIVITY)</th>
-                <th rowspan="2">OUTPUT REQUIRED</th>
-                <th rowspan="2">DIMENSIONS</th>
-                <th rowspan="2">MEASURES</th>
-                <th colspan="5">SCALE</th>
-                <th rowspan="2">SUCCESS INDICATOR</th>
-                <th rowspan="2">MODE OF VERIFICATION</th>
-                    <tr>
-                        <th>5</th>
-                        <th>4</th>
-                        <th>3</th>
-                        <th>2</th>
-                        <th>1</th>
-                    </tr>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td rowspan="3">
-                    <label for="type"></label>
-                        <select name="cars" id="cars">
-                        <option value="core" selected>CORE</option>
-                        <option value="strategic">STRATEGIC</option>
-                        <option value="support">SUPPORT</option>
-                        </select>
-                </td>
-                <td contenteditable="true" rowspan="3">Program/Project/Activity</td>
-                <td contenteditable="true" rowspan="3">Output of the activity</td>
-                <td>Quality</td>
-                <td>quality measures</td>
-                <td contenteditable="true">accurate</td>
-                <td contenteditable="true">N/A</td>
-                <td contenteditable="true">N/A</td>
-                <td contenteditable="true">N/A</td>
-                <td contenteditable="true">inaccurate</td>
-                <td contenteditable="true" rowspan="3">___% (no./total no.) of activity quality timeliness</td>
-                <td contenteditable="true" rowspan="3">Logbook/Routing Slip, etc.</td>
-                    <tr>
-                        <td>Efficiency</td>
-                        <td>quantity/measure of efficiency</td>
-                        <td contenteditable="true">accurate</td>
-                        <td contenteditable="true">N/A</td>
-                        <td contenteditable="true">N/A</td>
-                        <td contenteditable="true">N/A</td>
-                        <td contenteditable="true">inaccurate</td>
-                    </tr>
-                    <tr>
-                        <td>Timeliness</td>
-                        <td>measure of timeliness</td>
-                        <td contenteditable="true">accurate</td>
-                        <td contenteditable="true">N/A</td>
-                        <td contenteditable="true">N/A</td>
-                        <td contenteditable="true">N/A</td>
-                        <td contenteditable="true">inaccurate</td>
-                    </tr>
-            </tr>
-        </tbody>
+      <thead>
+        <tr>
+          <th rowspan="2">TYPE</th>
+          <th rowspan="2">MFO (PROGRAM/PROJECT/ACTIVITY)</th>
+          <th rowspan="2">OUTPUT REQUIRED</th>
+          <th rowspan="2">DIMENSIONS</th>
+          <th rowspan="2">MEASURES</th>
+          <th colspan="5">SCALE</th>
+          <th rowspan="2">SUCCESS INDICATOR</th>
+          <th rowspan="2">MODE OF VERIFICATION</th>
+        </tr>
+        <tr>
+          <th>5</th>
+          <th>4</th>
+          <th>3</th>
+          <th>2</th>
+          <th>1</th>
+        </tr>
+      </thead>
+
+      <tbody id="rating-scale-body"></tbody>
     </table>
 
     <button onclick="addRow()">Add New Row</button>
-
+    <button onclick="saveRatingScale(true)">Save Rating Scale</button>
+    <button onclick="generatePCR()">Generate PCR</button>
+    <button onclick="openPMAR()">Open PMAR</button>
 
     <script>
-        function addRow() {
-            const tbody = document.getElementById("myPRS").getElementsByTagName('tbody')[0];
-            
-            const r1 = document.createElement('tr');
-            r1.innerHTML = `
-                <td rowspan="3">
-                    <label for="type"></label>
-                        <select name="cars" id="cars">
-                        <option value="core" selected>CORE</option>
-                        <option value="strategic">STRATEGIC</option>
-                        <option value="support">SUPPORT</option>
-                        </select>
-                </td>
-                <td contenteditable="true" rowspan="3">New Activity</td>
-                <td contenteditable="true" rowspan="3">New Output</td>
-                <td>Quality</td>
-                <td>quality measures</td>
-                <td contenteditable="true">accurate</td>
-                <td contenteditable="true">N/A</td>
-                <td contenteditable="true">N/A</td>
-                <td contenteditable="true">N/A</td>
-                <td contenteditable="true">inaccurate</td>
-                <td contenteditable="true" rowspan="3">New Success Indicator</td>
-                <td contenteditable="true" rowspan="3">New Verification Mode</td>
-            `;
-            
-            const r2 = document.createElement('tr');
-            r2.innerHTML = `
-                <td>Efficiency</td>
-                <td>quantity/measure of efficiency</td>
-                <td contenteditable="true">accurate</td>
-                <td contenteditable="true">N/A</td>
-                <td contenteditable="true">N/A</td>
-                <td contenteditable="true">N/A</td>
-                <td contenteditable="true">inaccurate</td>
-            `;
-            
-            const r3 = document.createElement('tr');
-            r3.innerHTML = `
-                <td>Timeliness</td>
-                <td>measure of timeliness</td>
-                <td contenteditable="true">accurate</td>
-                <td contenteditable="true">N/A</td>
-                <td contenteditable="true">N/A</td>
-                <td contenteditable="true">N/A</td>
-                <td contenteditable="true">inaccurate</td>
-            `;
-            
-            tbody.appendChild(r1);
-            tbody.appendChild(r2);
-            tbody.appendChild(r3);
+      const RATING_SCALE_STORAGE_KEY = 'spmsRatingScaleData';
+      let autoSaveTimer = null;
+
+      function defaultActivity() {
+        return {
+          type: 'CORE',
+          mfo: 'Program/Project/Activity',
+          outputRequired: 'Output of the activity',
+          successIndicator:
+            '___% (no./total no.) of activity quality timeliness',
+          modeOfVerification: 'Logbook/Routing Slip, etc.',
+          dimensions: {
+            Quality: {
+              measure: 'quality measures',
+              scale5: 'accurate',
+              scale4: 'N/A',
+              scale3: 'N/A',
+              scale2: 'N/A',
+              scale1: 'inaccurate',
+            },
+            Efficiency: {
+              measure: 'quantity/measure of efficiency',
+              scale5: 'accurate',
+              scale4: 'N/A',
+              scale3: 'N/A',
+              scale2: 'N/A',
+              scale1: 'inaccurate',
+            },
+            Timeliness: {
+              measure: 'measure of timeliness',
+              scale5: 'accurate',
+              scale4: 'N/A',
+              scale3: 'N/A',
+              scale2: 'N/A',
+              scale1: 'inaccurate',
+            },
+          },
+        };
+      }
+
+      function createEditableCell(text, rowSpan) {
+        const cell = document.createElement('td');
+        cell.contentEditable = 'true';
+        cell.textContent = text || '';
+
+        if (rowSpan) {
+          cell.rowSpan = rowSpan;
         }
 
+        return cell;
+      }
 
-    populateIPCR();
+      function createPlainCell(text) {
+        const cell = document.createElement('td');
+        cell.textContent = text || '';
+        return cell;
+      }
 
+      function createTypeCell(type) {
+        const cell = document.createElement('td');
+        cell.rowSpan = 3;
 
+        const select = document.createElement('select');
+        select.className = 'type-select';
 
-    alert("IPCR has been generated successfully.");
+        const options = ['CORE', 'STRATEGIC', 'SUPPORT'];
+        const selectedType = String(type || 'CORE').toUpperCase();
 
-}
+        options.forEach(function (optionText) {
+          const option = document.createElement('option');
+          option.value = optionText;
+          option.textContent = optionText;
+
+          if (selectedType === optionText) {
+            option.selected = true;
+          }
+
+          select.appendChild(option);
+        });
+
+        cell.appendChild(select);
+        return cell;
+      }
+
+      function getDimension(activity, dimensionName) {
+        if (!activity || !activity.dimensions) return {};
+
+        return (
+          activity.dimensions[dimensionName] ||
+          activity.dimensions[dimensionName.toLowerCase()] ||
+          {}
+        );
+      }
+
+      function addRow(activity, shouldSave) {
+        const tbody = document.getElementById('rating-scale-body');
+        const item = activity || defaultActivity();
+
+        const quality = getDimension(item, 'Quality');
+        const efficiency = getDimension(item, 'Efficiency');
+        const timeliness = getDimension(item, 'Timeliness');
+
+        const r1 = document.createElement('tr');
+        r1.appendChild(createTypeCell(item.type));
+        r1.appendChild(createEditableCell(item.mfo, 3));
+        r1.appendChild(createEditableCell(item.outputRequired, 3));
+        r1.appendChild(createPlainCell('Quality'));
+        r1.appendChild(createEditableCell(quality.measure));
+        r1.appendChild(createEditableCell(quality.scale5));
+        r1.appendChild(createEditableCell(quality.scale4));
+        r1.appendChild(createEditableCell(quality.scale3));
+        r1.appendChild(createEditableCell(quality.scale2));
+        r1.appendChild(createEditableCell(quality.scale1));
+        r1.appendChild(createEditableCell(item.successIndicator, 3));
+        r1.appendChild(createEditableCell(item.modeOfVerification, 3));
+
+        const r2 = document.createElement('tr');
+        r2.appendChild(createPlainCell('Efficiency'));
+        r2.appendChild(createEditableCell(efficiency.measure));
+        r2.appendChild(createEditableCell(efficiency.scale5));
+        r2.appendChild(createEditableCell(efficiency.scale4));
+        r2.appendChild(createEditableCell(efficiency.scale3));
+        r2.appendChild(createEditableCell(efficiency.scale2));
+        r2.appendChild(createEditableCell(efficiency.scale1));
+
+        const r3 = document.createElement('tr');
+        r3.appendChild(createPlainCell('Timeliness'));
+        r3.appendChild(createEditableCell(timeliness.measure));
+        r3.appendChild(createEditableCell(timeliness.scale5));
+        r3.appendChild(createEditableCell(timeliness.scale4));
+        r3.appendChild(createEditableCell(timeliness.scale3));
+        r3.appendChild(createEditableCell(timeliness.scale2));
+        r3.appendChild(createEditableCell(timeliness.scale1));
+
+        tbody.appendChild(r1);
+        tbody.appendChild(r2);
+        tbody.appendChild(r3);
+
+        if (shouldSave !== false) {
+          scheduleAutoSave();
+        }
+      }
+
+      function getCellText(cell) {
+        return cell ? cell.innerText.trim() : '';
+      }
+
+      function collectRatingScaleData() {
+        const tbody = document.getElementById('rating-scale-body');
+        const rows = tbody.rows;
+        const activities = [];
+
+        for (let i = 0; i < rows.length; i += 3) {
+          const qualityRow = rows[i];
+          const efficiencyRow = rows[i + 1];
+          const timelinessRow = rows[i + 2];
+
+          if (!qualityRow || !efficiencyRow || !timelinessRow) continue;
+
+          const typeSelect = qualityRow.cells[0].querySelector('select');
+
+          const activity = {
+            type: typeSelect ? typeSelect.value : 'CORE',
+            mfo: getCellText(qualityRow.cells[1]),
+            outputRequired: getCellText(qualityRow.cells[2]),
+            successIndicator: getCellText(qualityRow.cells[10]),
+            modeOfVerification: getCellText(qualityRow.cells[11]),
+            dimensions: {
+              Quality: {
+                measure: getCellText(qualityRow.cells[4]),
+                scale5: getCellText(qualityRow.cells[5]),
+                scale4: getCellText(qualityRow.cells[6]),
+                scale3: getCellText(qualityRow.cells[7]),
+                scale2: getCellText(qualityRow.cells[8]),
+                scale1: getCellText(qualityRow.cells[9]),
+              },
+              Efficiency: {
+                measure: getCellText(efficiencyRow.cells[1]),
+                scale5: getCellText(efficiencyRow.cells[2]),
+                scale4: getCellText(efficiencyRow.cells[3]),
+                scale3: getCellText(efficiencyRow.cells[4]),
+                scale2: getCellText(efficiencyRow.cells[5]),
+                scale1: getCellText(efficiencyRow.cells[6]),
+              },
+              Timeliness: {
+                measure: getCellText(timelinessRow.cells[1]),
+                scale5: getCellText(timelinessRow.cells[2]),
+                scale4: getCellText(timelinessRow.cells[3]),
+                scale3: getCellText(timelinessRow.cells[4]),
+                scale2: getCellText(timelinessRow.cells[5]),
+                scale1: getCellText(timelinessRow.cells[6]),
+              },
+            },
+          };
+
+          activities.push(activity);
+        }
+
+        return {
+          activities: activities,
+        };
+      }
+
+      function saveRatingScale(showAlert) {
+        const data = collectRatingScaleData();
+
+        try {
+          localStorage.setItem(RATING_SCALE_STORAGE_KEY, JSON.stringify(data));
+
+          if (showAlert) {
+            alert('Rating Scale has been saved successfully.');
+          }
+        } catch (error) {
+          console.error(error);
+
+          if (showAlert) {
+            alert('Unable to save Rating Scale data.');
+          }
+        }
+      }
+
+      function scheduleAutoSave() {
+        clearTimeout(autoSaveTimer);
+
+        autoSaveTimer = setTimeout(function () {
+          saveRatingScale(false);
+        }, 300);
+      }
+
+      function loadSavedRatingScale() {
+        const tbody = document.getElementById('rating-scale-body');
+        tbody.innerHTML = '';
+
+        let savedData = null;
+
+        try {
+          savedData = localStorage.getItem(RATING_SCALE_STORAGE_KEY);
+        } catch (error) {
+          console.warn('Local storage is not available.', error);
+        }
+
+        if (!savedData) {
+          addRow(defaultActivity(), false);
+          return;
+        }
+
+        try {
+          const data = JSON.parse(savedData);
+          const activities = data.activities || [];
+
+          if (activities.length === 0) {
+            addRow(defaultActivity(), false);
+            return;
+          }
+
+          activities.forEach(function (activity) {
+            addRow(activity, false);
+          });
+        } catch (error) {
+          console.warn('Saved Rating Scale data could not be loaded.', error);
+          addRow(defaultActivity(), false);
+        }
+      }
+
+      function generatePCR() {
+        saveRatingScale(false);
+
+        const data = collectRatingScaleData();
+        const stringData = JSON.stringify(data);
+
+        try {
+          localStorage.setItem(RATING_SCALE_STORAGE_KEY, stringData);
+        } catch (error) {
+          console.warn('Local storage is not available.', error);
+        }
+
+        window.location.href =
+          'PCR.html#data=' + encodeURIComponent(stringData);
+      }
+
+      function openPMAR() {
+        saveRatingScale(false);
+
+        const data = collectRatingScaleData();
+        const stringData = JSON.stringify(data);
+
+        try {
+          localStorage.setItem(RATING_SCALE_STORAGE_KEY, stringData);
+        } catch (error) {
+          console.warn('Local storage is not available.', error);
+        }
+
+        window.location.href =
+          'MAR.html#data=' + encodeURIComponent(stringData);
+      }
+
+      document.addEventListener('input', function () {
+        scheduleAutoSave();
+      });
+
+      document.addEventListener('change', function () {
+        scheduleAutoSave();
+      });
+
+      window.addEventListener('beforeunload', function () {
+        saveRatingScale(false);
+      });
+
+      loadSavedRatingScale();
     </script>
-
-    <!--
-    <script>
-        function addRow() {
-            const table = document.getElementById("myPRS").getElementsByTagName('tbody')[0];
-            const newRow = table.insertRow();
-            
-            for (let i = 0; i < 12; i++) {
-                const newCell = newRow.insertCell(i);
-                newCell.contentEditable = "true";
-                newCell.innerHTML = "New Data";
-            }
-        }
-    </script>    
-    -->
-
-
-</body>
+  </body>
 </html>
